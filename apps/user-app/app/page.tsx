@@ -1,17 +1,5 @@
-import Hero from "@/components/landing-section/Hero";
-import Features from "@/components/landing-section/Features";
-import Benefits from "@/components/landing-section/Benefits";
-import Testimonials from "@/components/landing-section/Testimonials";
-import CallToAction from "@/components/landing-section/CallToAction";
+import Hero from "@/components/main-layout/Hero";
 
-export default async function Page() {
-  return (
-    <>
-      <Hero />
-      <Features />
-      <Benefits />
-      <Testimonials />
-      <CallToAction />
-    </>
-  )
+export default function Page() {
+  return <Hero />;
 }
