@@ -33,7 +33,7 @@ app.post("/bankWebhook", async (req: Request, res: Response) => {
         }
 
         if (status === "Success") {
-            await prisma.$transaction(async (tx) => {
+            await prisma.$transaction(async (tx: any) => {
                 await tx.onRampTransaction.update({
                     where: { token },
                     data: {
