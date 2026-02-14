@@ -59,7 +59,7 @@ graph TD
 ### Installation
 1. Clone the repository:
    ```bash
-   git clone https://github.com/your-username/PixelPay.git
+   git clone https://github.com/harshxengr/PixelPay.git
    cd PixelPay
    ```
 2. Install dependencies:
