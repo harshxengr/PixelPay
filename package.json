@@ -2,7 +2,7 @@
   "name": "PixelPay",
   "private": true,
   "scripts": {
-    "build": "turbo run build",
+    "build": "pnpm --filter @repo/db generate && turbo run build",
     "dev": "turbo run dev",
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
