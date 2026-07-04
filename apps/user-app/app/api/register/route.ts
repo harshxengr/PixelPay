@@ -1,4 +1,4 @@
-import { prisma } from "@repo/db";
+import { Prisma, prisma } from "@repo/db";
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from 'bcrypt'
 import { SignUpSchema } from "@repo/validation-schemas";
@@ -17,20 +17,26 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
         const { name, email, phoneNumber, password } = parsed.data;
 
-        const existingUser = await prisma.user.findUnique({
-            where: { email }
+        const existingUser = await prisma.user.findFirst({
+            where: {
+                OR: [
+                    { email },
+                    { phoneNumber },
+                ],
+            },
         });
 
         if (existingUser) {
+            const field = existingUser.email === email ? "Email" : "Phone number";
             return NextResponse.json(
-                { message: "Email already registered." },
+                { message: `${field} already registered.` },
                 { status: 400 }
             );
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        prisma.$transaction(async (tx) => {
+        await prisma.$transaction(async (tx) => {
             const user = await tx.user.create({
                 data: {
                     name,
@@ -38,7 +44,15 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
                     phoneNumber,
                     password: hashedPassword
                 }
-            })
+            });
+
+            await tx.balance.create({
+                data: {
+                    userId: user.id,
+                    amount: 0,
+                    locked: 0,
+                },
+            });
         })
 
         if (process.env.NODE_ENV === "development") {
@@ -52,6 +66,18 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
     } catch (error) {
         console.error("Error during user registration:", error);
+        if (
+            error instanceof Prisma.PrismaClientKnownRequestError &&
+            error.code === "P2002"
+        ) {
+            const target = Array.isArray(error.meta?.target) ? error.meta.target[0] : undefined;
+            const field = target === "phoneNumber" ? "Phone number" : "Email";
+            return NextResponse.json(
+                { message: `${field} already registered.` },
+                { status: 400 }
+            );
+        }
+
         return NextResponse.json(
             { message: "Something went wrong. Please try again." },
             { status: 500 }
