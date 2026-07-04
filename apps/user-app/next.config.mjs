@@ -3,9 +3,8 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
-  experimental: {
-    disableFileSystemPublicRoutes: true,
-  },
+  experimental: {},
+  turbopack: {},
   webpack: (config, { isServer }) => {
     config.watchOptions = {
       ignored: [
