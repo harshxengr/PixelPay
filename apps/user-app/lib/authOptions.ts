@@ -4,6 +4,10 @@ import bcrypt from "bcrypt";
 import { SignInSchema } from "@repo/validation-schemas";
 import { NextAuthOptions } from "next-auth";
 
+const authSecret =
+    process.env.NEXTAUTH_SECRET ||
+    (process.env.NODE_ENV === "development" ? "pixelpay-local-development-secret" : undefined);
+
 export const authOptions: NextAuthOptions = {
     providers: [
         CredentialsProvider({
@@ -94,5 +98,5 @@ export const authOptions: NextAuthOptions = {
             return session;
         }
     },
-    secret: process.env.NEXTAUTH_SECRET,
+    secret: authSecret,
 }

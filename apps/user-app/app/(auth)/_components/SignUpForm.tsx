@@ -48,7 +48,9 @@ const SignUpForm = () => {
       }
 
       toast.error(errorMessage, { id: toastId });
-      console.error("Sign-up error:", error);
+      if (!axios.isAxiosError(error)) {
+        console.error("Unexpected sign-up error:", error);
+      }
     } finally {
       setIsSubmitting(false)
     }
